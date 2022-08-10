@@ -1,0 +1,16 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: monitoring-nginx
+  namespace: monitoring
+  labels:
+    team: plg-stack
+spec:
+  endpoints:
+  - interval: 5s
+    path: /metrics
+    port: ngmon
+  selector:
+    matchLabels:
+      app: nginx-metrics

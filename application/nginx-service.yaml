@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: monitoring
+  labels:
+    app: nginx-metrics
+spec:
+  ports:
+  - name: ngmon
+    port: 8080
+    protocol: TCP
+    targetPort: 9113
+  selector:
+    app: nginx
+  type: NodePort

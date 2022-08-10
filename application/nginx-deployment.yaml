@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-server
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+        - name: nginx-exporter
+          image: 'nginx/nginx-prometheus-exporter:0.10.0'
+          args:
+            - '-nginx.scrape-uri=http://localhost/nginx_status'
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: 500m
+          ports:
+            - containerPort: 9113
+      volumes:
+        - configMap:
+            name: nginx-configmap
+            items:
+              - key: default.conf
+                path: default.conf
+          name: nginx-config
